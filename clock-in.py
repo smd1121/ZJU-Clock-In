@@ -33,10 +33,10 @@ class ClockIn(object):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36"
     }
 
-    def __init__(self, username, password, eai_sess):
+    def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.eai_sess = eai_sess
+        # self.eai_sess = eai_sess
         self.sess = requests.Session()
 #         self.ocr = ddddocr.DdddOcr()
         self.ocr = ddddocr.DdddOcr(show_ad=False)
@@ -59,6 +59,8 @@ class ClockIn(object):
         }
         res = self.sess.post(url=self.LOGIN_URL, data=data, headers=self.HEADERS)
 
+        self.cookies = res.cookies
+
         # check if login successfully
         if '统一身份认证' in res.content.decode():
             raise LoginError('登录失败，请核实账号密码重新登录')
@@ -76,8 +78,6 @@ class ClockIn(object):
 
     def get_captcha(self):
         """Get CAPTCHA code"""
-        cookie_dict = {'eai-sess': self.eai_sess}
-        self.sess.cookies = requests.cookies.cookiejar_from_dict(cookie_dict)
         resp = self.sess.get(self.CAPTCHA_URL, headers=self.HEADERS)
         captcha = self.ocr.classification(resp.content)
         print("验证码：", captcha)
@@ -159,10 +159,9 @@ class DecodeError(Exception):
     pass
 
 
-def main(username, password, eai_sess):
+def main(username, password):
     """Hit card process
     Arguments:
-        eai_sess: (str) 用户的cookies
         username: (str) 浙大统一认证平台用户名（一般为学号）
         password: (str) 浙大统一认证平台密码
     """
@@ -175,7 +174,7 @@ def main(username, password, eai_sess):
     # print("[本次将暂停%d分钟]" % minutes)
     # time.sleep(minutes * 60)
 
-    dk = ClockIn(username, password, eai_sess)
+    dk = ClockIn(username, password)
 
     print("登录到浙大统一身份认证平台...")
     try:
@@ -210,7 +209,6 @@ def main(username, password, eai_sess):
 if __name__ == "__main__":
     username = sys.argv[1]
     password = sys.argv[2]
-    eai_sess = 'as6aghsrs1ft42jc38bve5h3j7'  # eai_sess cookie因人而异 获取方法https://www.cc98.org/topic/4969340
     
-    main(username, password, eai_sess)
+    main(username, password)
 
