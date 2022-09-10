@@ -111,8 +111,8 @@ class ClockIn(object):
         new_info['number'] = number
         new_info["date"] = self.get_date()
         new_info["created"] = round(time.time())
-        new_info["address"] = "上海市 浦东新区" #"陕西省西安市未央区" #"浙江省杭州市西湖区"
-        new_info["area"] = "上海市 浦东新区" #"陕西省 西安市 未央区" # "浙江省 杭州市 西湖区"
+        new_info["address"] = "浙江省杭州市西湖区" #"上海市 浦东新区" #"陕西省西安市未央区" #"浙江省杭州市西湖区"
+        new_info["area"] = "浙江省 杭州市 西湖区" #"上海市 浦东新区" #"陕西省 西安市 未央区" # "浙江省 杭州市 西湖区"
         new_info["province"] = new_info["area"].split(' ')[0]
         new_info["city"] = new_info["area"].split(' ')[1]
         # form change
